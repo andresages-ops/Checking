@@ -2,8 +2,8 @@
   "name": "Checador - Control de horas",
   "short_name": "Checador",
   "description": "Registra tu entrada, descanso y salida, y consulta tus horas trabajadas por semana, quincena y mes.",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1C1B1A",
@@ -21,12 +21,6 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }

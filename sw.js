@@ -1,19 +1,17 @@
 // Service worker de Checador
-// Debe vivir en la RAÍZ del sitio (mismo nivel que index.html)
-
 const CACHE_NAME = "checador-cache-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./app.js",
-  "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
+  "./manifest.json"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(APP_SHELL).catch(err => console.warn("Error en precarga de caché:", err));
+    })
   );
   self.skipWaiting();
 });
@@ -27,25 +25,11 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Cache-first para el shell, network-first (con caída a cache) para lo demás,
-// así siempre intenta traer contenido fresco (React/Babel desde CDN) y usa el
-// cache cuando no hay conexión.
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
-
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      const network = fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-          }
-          return response;
-        })
-        .catch(() => cached);
-
-      return cached || network;
+      return cached || fetch(event.request).catch(() => null);
     })
   );
 });
